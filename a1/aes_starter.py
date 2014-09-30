@@ -71,7 +71,7 @@ def bv_hex_str(bv):
 	cstr = ""
 	for n in range((len(bv)/8)):
 		c = chr(bv[n*8:n*8+8].intValue())
-	cstr += c
+		cstr += c
 	return binascii.hexlify(cstr)
 
 def print_state(state_array, label = " "):
@@ -108,9 +108,6 @@ equivalent BitVector value '''
 		key_bv += byte_bv # catenate new BitVector byte onto return value
 	return key_bv
 
-def xor(bv1, bv2):
-	''' Create an XOR function to xor the bit value '''
-	return bv1 ^ bv2
 ''' END of HELPER functions '''
 
 
@@ -149,7 +146,7 @@ param sa is a 4x4 state array, param rk is a 4-word round key '''
 	for i in range(4):
 		col = []
 		for j in range(4):
-			col.append(xor(sa[i][j], rk[i][j]))
+			col.append(sa[i][j].__xor__(rk[i][j]))
 		output.append(col)
 	return output
 

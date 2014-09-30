@@ -17,11 +17,6 @@ key_schedule = init_key_schedule(key_bv(NIST_test_key))
 init_state = state_array = init_state_array(NIST_test_plaintext_BV)
 
 
-def test_xor_bv():
-	result = bv_hex_str(xor(init_state[0][0], key_schedule[0][0]))
-	assert result == '19',\
-	"function return " + result
-
 # perform initial add_round_key step before entering "round" process
 state_array = add_round_key(state_array, key_schedule[0:4])
 
