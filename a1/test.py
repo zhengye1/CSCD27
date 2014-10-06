@@ -22,11 +22,12 @@ state_array = add_round_key(state_array, key_schedule[0:4])
 
 
 def test_key_schedule():
-	assert state_str(key_schedule) == NIST_test_key, \
-	"Key Schedule is wrong"
+	result = state_str(key_schedule)
+	assert result == NIST_test_key, \
+	"Key Schedule is wrong, result = " + result 
 
 def test_input_round_1():
-  assert state_str(state_array) == NIST_input_round_1,\
+	assert state_str(state_array) == NIST_input_round_1,\
       "test first-round input value based on output of initial add-round-key"
 
 
@@ -39,3 +40,15 @@ def test_inv_sbox_lookup():
 	result = bv_hex_str(inv_sbox_lookup(sbox_lookup(state_array[0][0])))
 	assert result == '19', \
 	"function return " + result
+
+def test_sub_key_bytes():
+	key_word = key_schedule[3]
+	temp = []
+	temp = key_word[1:]
+	temp.append(key_word[0])
+	key_word = temp
+	result = sub_key_bytes(key_word)
+	result = bv_hex_str(result[0]) + bv_hex_str(result[1]) + \
+	        bv_hex_str(result[2]) + bv_hex_str(result[3])
+	assert result == '8a84eb01', \
+	       "sub key butes return " + result

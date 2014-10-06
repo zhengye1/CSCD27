@@ -7,6 +7,7 @@ Sources Used: BitVector documentation, NIST AES-spec appendix for tests
 import sys
 import BitVector
 import binascii
+import copy
 
 rounds = 10  # 128-bit AES uses 10 rounds
 
@@ -129,13 +130,46 @@ def sub_key_bytes(key_word):
 	''' Iterate through round-key key_word (4-byte word) performing sbox
 substitutions, returning the transformed round-key key_word '''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 44-47  
-pass
+	result = copy.deepcopy(key_word)
+	for i in range(4):
+		result[i] = sbox_lookup(result[i])
+	return result
 
 def init_key_schedule(key_bv):
 	'''key_bv is the 128-bit input key value represented as a BitVector; return
 key_schedule as an array of (4*(1+#rounds)) 32-bit BitVector words '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 44-47  
-	return init_state_array(key_bv)
+# ADD YOUR CODE HERE - SEE LEC SLIDES 44-47 
+        round_key = []
+	for i in range(4 * ( 1 + rounds)):
+		col = []
+		if (i % 4 == 0 and i >= 4 ):
+			# rot words
+			temp = []
+			temp = copy.deepcopy(round_key[i - 1][1:])
+			temp.append(round_key[i - 1][0])
+			# sub sbox			
+			temp = sub_key_bytes(temp)
+			# xor
+			rcon_bv = BitVector.BitVector(intVal=rcon[i/4], \
+			                                     size = 8)
+			temp[0] = (round_key[i - 4][0].__xor__(temp[0]))\
+			        .__xor__(rcon_bv)
+			temp[1] = round_key[i - 4][1].__xor__(temp[1])
+			temp[2] = round_key[i - 4][2].__xor__(temp[2])
+			temp[3] = round_key[i - 4][3].__xor__(temp[3])			
+			#
+			col = copy.deepcopy(temp)
+		else:
+			for j in range(4):
+				if (i < 4):
+					col.append(key_bv[(i*32)+(j*8)\
+					                  :(i*32)+(j*8)+8])
+				elif (i % 4 != 0  and i > 4):
+					col.append(round_key[i - 4][j]\
+					           .__xor__(round_key[i - 1][j]))
+
+		round_key.append(col)
+	return round_key
 
 
 def add_round_key(sa, rk):
