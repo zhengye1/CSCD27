@@ -275,6 +275,7 @@ def gf_mult(bv, factor):
 GF(2^8).  param bv is an 8-bit BitVector, param factor is an integer.
 returns an 8-bit BitVector, whose value is bv*factor in GF(2^8) '''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 33-36
+print "fi this works, I am fine --Pan"
 pass
 
 def mix_columns(sa):
