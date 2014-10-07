@@ -226,16 +226,10 @@ def shift_bytes_left(bv, num):
 	''' Return the value of BitVector bv after rotating it to the left
 by num bytes'''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
-<<<<<<< HEAD:a1/aes.py
 	number_of_bit = num * 8
 	bv_copy = copy.deepcopy(bv)
 	bv_copy.__lshift__(number_of_bit)
 	return bv_copy
-
-=======
-print "Hell0World"
-pass
->>>>>>> be5c987ee143ed2ad5173d45f63483fe97ecf947:a1/aes_starter.py
 
 def shift_bytes_right(bv, num):
 	''' Return the value of BitVector bv after rotating it to the right
