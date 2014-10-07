@@ -1,1 +1,1 @@
-nosetests test
+nosetests aes_test
