@@ -214,6 +214,7 @@ def shift_bytes_left(bv, num):
 	''' Return the value of BitVector bv after rotating it to the left
 by num bytes'''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
+print "Hell0World"
 pass
 
 def shift_bytes_right(bv, num):
