@@ -139,10 +139,10 @@ def init_key_schedule(key_bv):
 	'''key_bv is the 128-bit input key value represented as a BitVector; return
 key_schedule as an array of (4*(1+#rounds)) 32-bit BitVector words '''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 44-47 
-        round_key = []
-	for i in range(4 * ( 1 + rounds)):
+	round_key = init_state_array(key_bv)
+	for i in range(4, 4 * ( 1 + rounds)):
 		col = []
-		if (i % 4 == 0 and i >= 4 ):
+		if (i % 4 == 0):
 			# rot words
 			temp = []
 			temp = copy.deepcopy(round_key[i - 1][1:])
@@ -157,16 +157,12 @@ key_schedule as an array of (4*(1+#rounds)) 32-bit BitVector words '''
 			temp[1] = round_key[i - 4][1].__xor__(temp[1])
 			temp[2] = round_key[i - 4][2].__xor__(temp[2])
 			temp[3] = round_key[i - 4][3].__xor__(temp[3])			
-			#
+			# make a copy of new one, and assert to new key array
 			col = copy.deepcopy(temp)
 		else:
 			for j in range(4):
-				if (i < 4):
-					col.append(key_bv[(i*32)+(j*8)\
-					                  :(i*32)+(j*8)+8])
-				elif (i % 4 != 0  and i > 4):
-					col.append(round_key[i - 4][j]\
-					           .__xor__(round_key[i - 1][j]))
+				col.append(round_key[i - 4][j]\
+				.__xor__(round_key[i - 1][j]))
 
 		round_key.append(col)
 	return round_key
@@ -205,7 +201,7 @@ to that byte, returning the sboxinv value as an 8-bit BitVector. '''
 def sub_bytes(sa):
 	''' Iterate throught state array sa to perform sbox substitution 
 returning new state array. '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 18-20   
+
 pass
 
 def inv_sub_bytes(sa):
