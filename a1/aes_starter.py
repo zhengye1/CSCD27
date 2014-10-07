@@ -201,36 +201,74 @@ to that byte, returning the sboxinv value as an 8-bit BitVector. '''
 def sub_bytes(sa):
 	''' Iterate throught state array sa to perform sbox substitution 
 returning new state array. '''
+	output = []
+	for i in range(4):
+		col = []
+		for j in range(4):
+			col.append(sbox_lookup(sa[i][j]))
+		output.append(col)
+	return output
 
-pass
 
 def inv_sub_bytes(sa):
 	''' Iterate throught state array sa to perform inv-sbox substitution 
 returning new state array. '''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 18-20   
-pass
+	output = []
+	for i in range(4):
+		col = []
+		for j in range(4):
+			col.append(inv_sbox_lookup(sa[i][j]))
+		output.append(col)
+	return output
 
 def shift_bytes_left(bv, num):
 	''' Return the value of BitVector bv after rotating it to the left
 by num bytes'''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
-pass
+	number_of_bit = num * 8
+	bv_copy = copy.deepcopy(bv)
+	bv_copy.__lshift__(number_of_bit)
+	return bv_copy
+
 
 def shift_bytes_right(bv, num):
 	''' Return the value of BitVector bv after rotating it to the right
 by num bytes'''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32  
-pass
+	number_of_bit = num * 8
+	bv_copy = copy.deepcopy(bv)
+	bv_copy.__rshift__(number_of_bit)
+	return bv_copy
+
 
 def shift_rows(sa):
 	''' shift rows in state array sa to return new state array '''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32  
-pass
-
+	output = copy.deepcopy(sa)
+	for byte in range(1, 4):
+		row = output[0][byte] + output[1][byte] + \
+	output[2][byte] + output[3][byte]
+		row = shift_bytes_left(row, byte)
+		output[0][byte] = row[0:8]
+		output[1][byte] = row[8:16]
+		output[2][byte] = row[16:24]
+		output[3][byte] = row[24:32]
+	return output
+	
 def inv_shift_rows(sa):
 	''' shift rows on state array sa to return new state array '''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
-pass
+	output = copy.deepcopy(sa)
+	for byte in range(1, 4):
+		row = output[0][byte] + output[1][byte] + \
+	output[2][byte] + output[3][byte]
+		row = shift_bytes_right(row, byte)
+		output[0][byte] = row[0:8]
+		output[1][byte] = row[8:16]
+		output[2][byte] = row[16:24]
+		output[3][byte] = row[24:32]
+	return output
 
 def gf_mult(bv, factor):
 	''' Used by mix_columns and inv_mix_columns to perform multiplication in
