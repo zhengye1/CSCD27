@@ -1,4 +1,4 @@
-from aes_starter import *
+from aes import *
 # test key from AES-Spec Appendix B
 NIST_test_key = '2b7e151628aed2a6abf7158809cf4f3c'
 
@@ -29,7 +29,7 @@ round_key_array.append('d014f9a8c9ee2589e13f0cc8b6630ca6')
 
 
 # convert NIST_test_plaintext to BitVector value NIST_test_plaintext_BV ...
-init_state = state_array = init_state_array(NIST_test_plaintext_BV)
+state_array = init_state_array(NIST_test_plaintext_BV)
 
 
 # perform initial add_round_key step before entering "round" process
@@ -57,6 +57,51 @@ def test_inv_sbox_lookup():
 	assert result == '19', \
 	"function return " + result
 
+# Perform sub bytes
+sub_bytes_array = sub_bytes(state_array)
+def test_sub_bytes():
+	assert(state_str(sub_bytes_array)) == 'd42711aee0bf98f1b8b45de51e415230',\
+	"sub_bytes return " + result
+
+
+def test_inv_sub_bytes():
+	result = inv_sub_bytes(sub_bytes_array)
+	assert state_str(result) == NIST_input_round_1, \
+	"inv_sub_bytes wrong"
+
+# Used for test shift bytes	
+row = []
+for i in range(1, 4):
+	row.append(sub_bytes_array[0][i] + sub_bytes_array[1][i] + \
+	sub_bytes_array[2][i] + sub_bytes_array[3][i])
+
+def test_shift_bytes_left():
+	assert bv_hex_str(shift_bytes_left(row[0], 1)) == 'bfb44127',\
+	"shift bytes left wrong"
+	assert bv_hex_str(shift_bytes_left(row[1], 2)) == '5d521198',\
+	"shift bytes left wrong"
+	assert bv_hex_str(shift_bytes_left(row[2], 3)) == '30aef1e5',\
+	"shift bytes left wrong"
+
+def test_shift_bytes_right():
+	assert bv_hex_str(shift_bytes_right(shift_bytes_left(row[0], 1), 1)) == '27bfb441',\
+	"shift bytes right wrong"
+	assert bv_hex_str(shift_bytes_right(shift_bytes_left(row[1], 2), 2)) == '11985d52',\
+	"shift bytes right wrong"
+	assert bv_hex_str(shift_bytes_right(shift_bytes_left(row[2], 3), 3)) == 'aef1e530',\
+	"shift bytes right wrong"
+
+# Perform shift rows
+shift_row_array = shift_rows(sub_bytes_array)
+def test_shift_rows():
+	assert state_str(shift_row_array) == 'd4bf5d30e0b452aeb84111f11e2798e5',\
+	"shift rows return " + shift_row_array
+
+def test_inv_shift_rows():
+	result = inv_shift_rows(shift_row_array)
+	assert state_str(result) == state_str(sub_bytes_array), \
+	"inv shift row wrong"
+	
 def test_sub_key_bytes():
 	key_word = key_schedule[3]
 	temp = []
@@ -68,3 +113,4 @@ def test_sub_key_bytes():
 	        bv_hex_str(result[2]) + bv_hex_str(result[3])
 	assert result == '8a84eb01', \
 	       "sub key butes return " + result
+
