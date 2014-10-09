@@ -1118,7 +1118,7 @@ class BitVector( object ):                                           #(A1)
 
     def __init__( self, *args, **kwargs ):                           #(A2)
         if args:                                                     #(A3)
-               raise ValueError(                                     #(A4)
+            raise ValueError(                                     #(A4)
                       '''BitVector constructor can only be called with
                          keyword arguments for the following keywords:
                          filename, fp, size, intVal, bitlist, and

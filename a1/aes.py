@@ -342,40 +342,44 @@ def mix_columns(sa):
 
 def inv_mix_columns(sa):
 	''' Inverse mix columns on state array sa to return new state array '''
-# ADD YOUR CODE HERE - SEE LEC SLIDE 36  
-pass
+	# ADD YOUR CODE HERE - SEE LEC SLIDE 36  
+	state_array=copy.deepcopy(sa)
+	new_sa = []
+	matrix = [[14, 11, 13, 9], \
+	          [9, 14, 11, 13], \
+                  [13, 9, 14, 11], \
+	          [11, 13, 9, 14]]
+	for i in range(4):
+		col_collector = []
+		for j in range(4):
+			row_collector = BitVector.BitVector(intVal=0, size=8)
+			for k in range(4):
+				after_mult = gf_mult(state_array[i][k], matrix[j][k])
+				row_collector = Xor(after_mult, row_collector)
+			col_collector.append(row_collector)
+		new_sa.append(col_collector)
+	return new_sa	
 
 def encrypt(hex_key, hex_plaintext):
 	''' perform AES encryption using 128-bit hex_key on 128-bit plaintext 
 	hex_plaintext, where both key and plaintext values are expressed
 	in hexadecimal string notation. '''
 	# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
+	NIST_test_key = hex_key
+	NIST_test_plaintext = hex_plaintext
+	NIST_test_plaintext_BV = key_bv(NIST_test_plaintext)
+	key_schedule = init_key_schedule(key_bv(NIST_test_key))
+	state_array = init_state_array(NIST_test_plaintext_BV)
+	state_array = add_round_key(state_array, key_schedule[0:4])
 	round_time = 10
 	sa = state_array
-	#print state_array[0][1]
 	for i in range(round_time):
-    ############## Play with it for one round #######################
-	    # sub byte
 		sa = sub_bytes(sa)
-		print state_str(sa)
-	    # sub byte end
-	    
-	    # shift row
 		sa = shift_rows(sa)
-		print state_str(sa)
-	    # shift row end
-	    
-	    # Mix Columns
-		if (i != roundtime-1):
-		    sa = mix_columns(sa)
-		    print state_str(sa)
-	    # Mix Columns end
-	    
-	    # Add round Key
-		key_array = init_state_array(key_bv(round_key_array[i]))
-		sa = add_round_key(sa, key_array)
-		print state_str(sa)
-	    # Add round Key end
+		if (i != round_time-1):
+			sa = mix_columns(sa)
+		sa = add_round_key(sa, key_schedule[(4+i*4):(8+i*4)])
+	return sa
     ############## end Play with it for one round #######################        
 
 def decrypt(hex_key, hex_ciphertext):

@@ -32,7 +32,7 @@ if __name__ == "__main__":
       
     # convert NIST_test_plaintext to BitVector value NIST_test_plaintext_BV ...
     state_array = init_state_array(NIST_test_plaintext_BV)
-        
+    print state_array[0][0]
     # perform initial add_round_key step before entering "round" process
     state_array = add_round_key(state_array, key_schedule[0:4])    
     print state_array[0][0]
@@ -43,18 +43,19 @@ if __name__ == "__main__":
 ############## Play with it for one round #######################
         # sub byte
             sa = sub_bytes(sa)
-            print state_str(sa)
+            #print state_str(sa)
         # sub byte end
         
         # shift row
             sa = shift_rows(sa)
-            print state_str(sa)
+            #print state_str(sa)
         # shift row end
         
         # Mix Columns
             if i != 9:
                 sa = mix_columns(sa)
-                print state_str(sa)
+                #print state_str(sa)
+                #print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         # Mix Columns end
         
         # Add round Key

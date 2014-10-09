@@ -15,7 +15,7 @@ NIST_test_plaintext_BV = key_bv(NIST_test_plaintext)
 key_schedule = init_key_schedule(key_bv(NIST_test_key))
 # create each round key for checking
 round_key_array = []
-#round_key_array.append(NIST_test_key)
+round_key_array.append(NIST_test_key)
 round_key_array.append('a0fafe1788542cb123a339392a6c7605')
 round_key_array.append('f2c295f27a96b9435935807a7359f67f')
 round_key_array.append('3d80477d4716fe3e1e237e446d7a883b')
@@ -134,3 +134,27 @@ def test_gf_mult_3():
 	bv=BitVector.BitVector(intVal=test_bv, size=8)
 	assert str(gf_mult(bv, factor)) == "00110000", \
 	       "gf_mult test 3 error"
+	
+def test_mix_columns():
+	sa = init_state_array(key_bv('876e46a6f24ce78c4d904ad897ecc395'))
+	result = state_str(mix_columns(sa))
+	assert result == "473794ed40d4e4a5a3703aa64c9f42bc", \
+	       "mix_columns error"
+	
+def test_mix_columns_2():
+	sa = init_state_array(key_bv('be3bd4fed4e1f2c80a642cc0da83864d'))
+	result = state_str(mix_columns(sa))
+	assert result == "00512fd1b1c889ff54766dcdfa1b99ea", \
+	       "mix_columns error"
+
+def test_inv_mix_columns():
+	sa = init_state_array(key_bv('473794ed40d4e4a5a3703aa64c9f42bc'))
+	result = state_str(inv_mix_columns(sa))
+	assert result == "876e46a6f24ce78c4d904ad897ecc395", \
+	       "inv_mix_columns 1 error"
+	
+def test_inv_mix_columns_2():
+	sa = init_state_array(key_bv('00512fd1b1c889ff54766dcdfa1b99ea'))
+	result = state_str(inv_mix_columns(sa))
+	assert result == "be3bd4fed4e1f2c80a642cc0da83864d", \
+	       "inv_mix_columns 2 error"

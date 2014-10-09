@@ -52,8 +52,7 @@ def _gf_mult(bv, factor):
         final = Xor(final, temp[i]) 
     return final
     
-def mix_columns(sa):
-    print "haha"
+def _mix_columns(sa):
     state_array=copy.deepcopy(sa)
     new_sa = []
     matrix = [[2, 3, 1, 1], [1, 2, 3, 1], \
@@ -96,13 +95,17 @@ if __name__ == "__main__":
     round_key_array.append('ac7766f319fadc2128d12941575c006e')
     round_key_array.append('d014f9a8c9ee2589e13f0cc8b6630ca6')
     
-    
     # convert NIST_test_plaintext to BitVector value NIST_test_plaintext_BV ...
     state_array = init_state_array(NIST_test_plaintext_BV)
-    
+    #print state_str(state_array)
     
     # perform initial add_round_key step before entering "round" process
-    state_array = add_round_key(state_array, key_schedule[0:4])    
+    state_array = add_round_key(state_array, key_schedule[0:4])  
+    #print state_str(NIST_test_plaintext_BV)
+    #print "key" + state_str(key_schedule)[32:64]
+    #print state_str(state_array)
+    
+    
     ###########################################################
     """
     #print aes.bv_hex_str(10100100)
@@ -119,9 +122,17 @@ if __name__ == "__main__":
     print str(gf_mult(bv, factor)) == "11100111"
     """
     ###########################################################
-    print state_array
+    #print state_array
     matrix = [[2, 3, 1, 1], [1, 2, 3, 1], \
                   [1, 1, 2, 3], [3, 1, 1, 2]]    
-    print gf_mult(state_array[0][0], 3)
-    print bv_hex_str(state_array[1])
+    #print gf_mult(state_array[0][0], 3)
+    #print bv_hex_str(state_array[1])
     #print state_str(mix_columns(state_array))
+    ############################################################
+    #sa = init_state_array(key_bv('473794ed40d4e4a5a3703aa64c9f42bc'))
+    #result = state_str(inv_mix_columns(sa))    
+    #print result
+    
+    ################################################################
+    result = state_str(encrypt(NIST_test_key, NIST_test_plaintext))
+    print result
