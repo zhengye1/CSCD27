@@ -333,14 +333,9 @@ def mix_columns(sa):
 			row_collector = BitVector.BitVector(intVal=0, size=8)
 			for k in range(4):
 				after_mult = gf_mult(state_array[i][k], matrix[j][k])
-				print state_array[i][k], matrix[j][k]
 				row_collector = Xor(after_mult, row_collector)
-				#print "end row: " + str(row_collector)
 			col_collector.append(row_collector)
-			print "end row: " + str(row_collector)
-		print col_collector[0],col_collector[1],col_collector[2],col_collector[3]
 		new_sa.append(col_collector)
-		#print new_sa[i]
 	return new_sa	
 	
 	
@@ -352,10 +347,36 @@ pass
 
 def encrypt(hex_key, hex_plaintext):
 	''' perform AES encryption using 128-bit hex_key on 128-bit plaintext 
-hex_plaintext, where both key and plaintext values are expressed
-in hexadecimal string notation. '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
-pass
+	hex_plaintext, where both key and plaintext values are expressed
+	in hexadecimal string notation. '''
+	# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
+	round_time = 10
+	sa = state_array
+	#print state_array[0][1]
+	for i in range(round_time):
+    ############## Play with it for one round #######################
+	    # sub byte
+		sa = sub_bytes(sa)
+		print state_str(sa)
+	    # sub byte end
+	    
+	    # shift row
+		sa = shift_rows(sa)
+		print state_str(sa)
+	    # shift row end
+	    
+	    # Mix Columns
+		if (i != roundtime-1):
+		    sa = mix_columns(sa)
+		    print state_str(sa)
+	    # Mix Columns end
+	    
+	    # Add round Key
+		key_array = init_state_array(key_bv(round_key_array[i]))
+		sa = add_round_key(sa, key_array)
+		print state_str(sa)
+	    # Add round Key end
+    ############## end Play with it for one round #######################        
 
 def decrypt(hex_key, hex_ciphertext):
 	''' perform AES decryption using 128-bit hex_key on 128-bit ciphertext

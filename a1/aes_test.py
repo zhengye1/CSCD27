@@ -15,7 +15,7 @@ NIST_test_plaintext_BV = key_bv(NIST_test_plaintext)
 key_schedule = init_key_schedule(key_bv(NIST_test_key))
 # create each round key for checking
 round_key_array = []
-round_key_array.append(NIST_test_key)
+#round_key_array.append(NIST_test_key)
 round_key_array.append('a0fafe1788542cb123a339392a6c7605')
 round_key_array.append('f2c295f27a96b9435935807a7359f67f')
 round_key_array.append('3d80477d4716fe3e1e237e446d7a883b')
