@@ -118,16 +118,19 @@ def test_gf_mult():
 	test_bv = 191 #hex as "bf"
 	factor = 2
 	bv=BitVector.BitVector(intVal=test_bv, size=8)
-	assert str(gf_mult(bv, factor)) == "01100101"
+	assert str(gf_mult(bv, factor)) == "01100101", \
+	       "gf_mult test 1 error"
 
 def test_gf_mult_2():
 	test_bv = 93 #hex as "5d"
 	factor = 3
 	bv=BitVector.BitVector(intVal=test_bv, size=8)
-	assert str(gf_mult(bv, factor)) == "11100111"
+	assert str(gf_mult(bv, factor)) == "11100111", \
+	       "gf_mult test 2 error"
 
 def test_gf_mult_3():
 	test_bv = 48 #hex as "30"
 	factor = 1
 	bv=BitVector.BitVector(intVal=test_bv, size=8)
-	assert str(gf_mult(bv, factor)) == "00110000"
+	assert str(gf_mult(bv, factor)) == "00110000", \
+	       "gf_mult test 3 error"
