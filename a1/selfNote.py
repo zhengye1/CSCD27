@@ -61,7 +61,7 @@ def mix_columns(sa):
     for i in range(4):
         col_collector = BitVector.BitVector(intVal=0, size=8)
         for j in range(4):
-            after_mult = gf_mult(state_array[i][j], matrix[j])
+            after_mult = gf_mult(state_array[i][j], matrix[i][j])
             print after_mult
             col_collector = Xor(after_mult, col_collector)
         new_sa.append(col_collector)
@@ -122,4 +122,6 @@ if __name__ == "__main__":
     print state_array
     matrix = [[2, 3, 1, 1], [1, 2, 3, 1], \
                   [1, 1, 2, 3], [3, 1, 1, 2]]    
-    print gf_mult(state_array[0][0], 1)
+    print gf_mult(state_array[0][0], 3)
+    print bv_hex_str(state_array[1])
+    #print state_str(mix_columns(state_array))

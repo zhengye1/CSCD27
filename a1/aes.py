@@ -323,6 +323,25 @@ def gf_mult(bv, factor):
 def mix_columns(sa):
 	''' Mix columns on state array sa to return new state array '''
 	# ADD YOUR CODE HERE - SEE LEC SLIDES 33-35   
+	state_array=copy.deepcopy(sa)
+	new_sa = []
+	matrix = [[2, 3, 1, 1], [1, 2, 3, 1], \
+	          [1, 1, 2, 3], [3, 1, 1, 2]]
+	for i in range(4):
+		col_collector = []
+		for j in range(4):
+			row_collector = BitVector.BitVector(intVal=0, size=8)
+			for k in range(4):
+				after_mult = gf_mult(state_array[i][k], matrix[j][k])
+				print state_array[i][k], matrix[j][k]
+				row_collector = Xor(after_mult, row_collector)
+				#print "end row: " + str(row_collector)
+			col_collector.append(row_collector)
+			print "end row: " + str(row_collector)
+		print col_collector[0],col_collector[1],col_collector[2],col_collector[3]
+		new_sa.append(col_collector)
+		#print new_sa[i]
+	return new_sa	
 	
 	
 

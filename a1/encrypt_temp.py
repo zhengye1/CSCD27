@@ -37,6 +37,13 @@ if __name__ == "__main__":
 
 # shift row
     sa_2 = shift_rows(sa_1)
-    print sa_2[0][0]
+    #print sa_2[2][2]
 # shift row end
+
+# Mix Columns
+    sa_3 = mix_columns(sa_2)
+    #print sa_3[3][3]
+# Mix Columns end
+
+#
 ############## end Play with it for one round #######################
