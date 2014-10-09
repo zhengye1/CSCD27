@@ -322,8 +322,9 @@ def gf_mult(bv, factor):
 
 def mix_columns(sa):
 	''' Mix columns on state array sa to return new state array '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 33-35   
-pass
+	# ADD YOUR CODE HERE - SEE LEC SLIDES 33-35   
+	
+	
 
 def inv_mix_columns(sa):
 	''' Inverse mix columns on state array sa to return new state array '''

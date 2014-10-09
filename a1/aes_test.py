@@ -114,3 +114,20 @@ def test_sub_key_bytes():
 	assert result == '8a84eb01', \
 	       "sub key butes return " + result
 
+def test_gf_mult():
+	test_bv = 191 #hex as "bf"
+	factor = 2
+	bv=BitVector.BitVector(intVal=test_bv, size=8)
+	assert str(gf_mult(bv, factor)) == "01100101"
+
+def test_gf_mult_2():
+	test_bv = 93 #hex as "5d"
+	factor = 3
+	bv=BitVector.BitVector(intVal=test_bv, size=8)
+	assert str(gf_mult(bv, factor)) == "11100111"
+
+def test_gf_mult_3():
+	test_bv = 48 #hex as "30"
+	factor = 1
+	bv=BitVector.BitVector(intVal=test_bv, size=8)
+	assert str(gf_mult(bv, factor)) == "00110000"
