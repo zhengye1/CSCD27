@@ -270,13 +270,55 @@ def inv_shift_rows(sa):
 		output[3][byte] = row[24:32]
 	return output
 
+def Xor(bv1, bv2):
+	'''does bv1 xor bv2. bv has to be 8-bits BitVectors'''
+	temp = []
+	new_temp = BitVector.BitVector(size=0)
+	for i in range(0, 8):
+		if (bv1[i] != bv2[i]):
+			temp.append(BitVector.BitVector(intVal=1, size = 1))
+		else:
+			temp.append(BitVector.BitVector(intVal=0, size = 1))
+	for i in range(0, 8):
+		new_temp += temp[i] 
+        
+	return new_temp
+
+
 def gf_mult(bv, factor):
 	''' Used by mix_columns and inv_mix_columns to perform multiplication in
-GF(2^8).  param bv is an 8-bit BitVector, param factor is an integer.
-returns an 8-bit BitVector, whose value is bv*factor in GF(2^8) '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 33-36
-print "fi this works, I am fine --Pan"
-pass
+	GF(2^8).  param bv is an 8-bit BitVector, param factor is an integer.
+	returns an 8-bit BitVector, whose value is bv*factor in GF(2^8) '''
+	# ADD YOUR CODE HERE - SEE LEC SLIDES 33-36
+	def _shift(bv):
+		'''shift the BV left by 1, with conditional xor with 00011011'''
+		#bv = bv + BitVector.BitVector(intVal=0, size=1) #left shift
+		if (bv[0] == 1):
+			bv = ls_bv[1:] + BitVector.BitVector(intVal=0, size=1)
+			bv = Xor(bv,BitVector.BitVector(intVal=27, size=8))
+		else:
+			bv = bv[1:]   
+			bv = bv + BitVector.BitVector(intVal=0, size=1)
+		return bv
+	bv_factor = BitVector.BitVector(intVal=factor, size = 8)
+	temp=[]
+	ls_bv=copy.deepcopy(bv)
+	for i in range(7): # shifting by the posision of the factor bits
+		if (bv_factor[i]==1): # if the bit turns on
+			ls_bv=copy.deepcopy(bv)
+			for j in range((7-i)):  #left shift the number by j times
+				ls_bv = _shift(ls_bv)
+			temp.append(ls_bv)
+	if (bv_factor[7]==1):
+		temp.append(bv)
+	final = BitVector.BitVector(intVal=0, size=8)
+	for i in range(len(temp)):
+		final = Xor(final, temp[i]) 
+	return final	
+		
+
+
+	
 
 def mix_columns(sa):
 	''' Mix columns on state array sa to return new state array '''
