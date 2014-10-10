@@ -199,19 +199,35 @@ def test_shift_bytes_right():
 	assert bv_hex_str(shift_bytes_right(shift_bytes_left(row[2], 3), 3)) == 'aef1e530',\
 	"shift bytes right wrong"
 
+###############################################################################
+# Tests for shift rows
 # Perform shift rows
 shift_row_array = shift_rows(sub_bytes_array)
 def test_shift_rows():
 	assert state_str(shift_row_array) == 'd4bf5d30e0b452aeb84111f11e2798e5',\
-	"shift rows return " + shift_row_array
+	"shift rows return " + state_str(shift_row_array)
 
+shift_row_array2 = shift_rows(sub_bytes_array2)
 def test_shift_rows_2():
-	assert 
+	assert state_str(shift_row_array2) == '49db873b453953897f02d2f177de961a',\
+	"shift row return " + state_str(shift_row_array2)
+
+shift_row_array3 = shift_rows(sub_bytes_array3)
+def test_shift_rows_3():
+	assert state_str(shift_row_array3) == 'acc1d6b8efb55a7b1323cfdf457311b5', \
+	"shift row return " + state_str(shift_row_array3)
+
+####################################################################################	
+# Test cases fpr inverse shift rows
 def test_inv_shift_rows():
 	result = inv_shift_rows(shift_row_array)
 	assert state_str(result) == state_str(sub_bytes_array), \
 	"inv shift row wrong"
-	
+
+def test_inv_shift_rows_2():
+	pass
+def test_inv_shift_rows_3():
+	pass
 def test_sub_key_bytes():
 	key_word = key_schedule[3]
 	temp = []
