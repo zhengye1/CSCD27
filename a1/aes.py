@@ -225,11 +225,20 @@ returning new state array. '''
 def shift_bytes_left(bv, num):
 	''' Return the value of BitVector bv after rotating it to the left
 by num bytes'''
+<<<<<<< HEAD:a1/aes.py
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
 	number_of_bit = num * 8
 	bv_copy = copy.deepcopy(bv)
 	bv_copy.__lshift__(number_of_bit)
 	return bv_copy
+=======
+# ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
+	number_of_bit = num * 8
+	bv_copy = copy.deepcopy(bv)
+	bv_copy.__lshift__(number_of_bit)
+	return bv_copy
+
+>>>>>>> developer:a1/aes.py
 
 def shift_bytes_right(bv, num):
 	''' Return the value of BitVector bv after rotating it to the right
@@ -268,30 +277,121 @@ def inv_shift_rows(sa):
 		output[2][byte] = row[16:24]
 		output[3][byte] = row[24:32]
 	return output
+<<<<<<< HEAD:a1/aes.py
+=======
+
+def Xor(bv1, bv2):
+	'''does bv1 xor bv2. bv has to be 8-bits BitVectors'''
+	temp = []
+	new_temp = BitVector.BitVector(size=0)
+	for i in range(0, 8):
+		if (bv1[i] != bv2[i]):
+			temp.append(BitVector.BitVector(intVal=1, size = 1))
+		else:
+			temp.append(BitVector.BitVector(intVal=0, size = 1))
+	for i in range(0, 8):
+		new_temp += temp[i] 
+        
+	return new_temp
+
+>>>>>>> developer:a1/aes.py
 
 def gf_mult(bv, factor):
 	''' Used by mix_columns and inv_mix_columns to perform multiplication in
-GF(2^8).  param bv is an 8-bit BitVector, param factor is an integer.
-returns an 8-bit BitVector, whose value is bv*factor in GF(2^8) '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 33-36
-pass
+	GF(2^8).  param bv is an 8-bit BitVector, param factor is an integer.
+	returns an 8-bit BitVector, whose value is bv*factor in GF(2^8) '''
+	# ADD YOUR CODE HERE - SEE LEC SLIDES 33-36
+	def _shift(bv):
+		'''shift the BV left by 1, with conditional xor with 00011011'''
+		#bv = bv + BitVector.BitVector(intVal=0, size=1) #left shift
+		if (bv[0] == 1):
+			bv = ls_bv[1:] + BitVector.BitVector(intVal=0, size=1)
+			bv = Xor(bv,BitVector.BitVector(intVal=27, size=8))
+		else:
+			bv = bv[1:]   
+			bv = bv + BitVector.BitVector(intVal=0, size=1)
+		return bv
+	bv_factor = BitVector.BitVector(intVal=factor, size = 8)
+	temp=[]
+	ls_bv=copy.deepcopy(bv)
+	for i in range(7): # shifting by the posision of the factor bits
+		if (bv_factor[i]==1): # if the bit turns on
+			ls_bv=copy.deepcopy(bv)
+			for j in range((7-i)):  #left shift the number by j times
+				ls_bv = _shift(ls_bv)
+			temp.append(ls_bv)
+	if (bv_factor[7]==1):
+		temp.append(bv)
+	final = BitVector.BitVector(intVal=0, size=8)
+	for i in range(len(temp)):
+		final = Xor(final, temp[i]) 
+	return final	
+		
+
+
+	
 
 def mix_columns(sa):
 	''' Mix columns on state array sa to return new state array '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 33-35   
-pass
+	# ADD YOUR CODE HERE - SEE LEC SLIDES 33-35   
+	state_array=copy.deepcopy(sa)
+	new_sa = []
+	matrix = [[2, 3, 1, 1], [1, 2, 3, 1], \
+	          [1, 1, 2, 3], [3, 1, 1, 2]]
+	for i in range(4):
+		col_collector = []
+		for j in range(4):
+			row_collector = BitVector.BitVector(intVal=0, size=8)
+			for k in range(4):
+				after_mult = gf_mult(state_array[i][k], matrix[j][k])
+				row_collector = Xor(after_mult, row_collector)
+			col_collector.append(row_collector)
+		new_sa.append(col_collector)
+	return new_sa	
+	
+	
 
 def inv_mix_columns(sa):
 	''' Inverse mix columns on state array sa to return new state array '''
-# ADD YOUR CODE HERE - SEE LEC SLIDE 36  
-pass
+	# ADD YOUR CODE HERE - SEE LEC SLIDE 36  
+	state_array=copy.deepcopy(sa)
+	new_sa = []
+	matrix = [[14, 11, 13, 9], \
+	          [9, 14, 11, 13], \
+                  [13, 9, 14, 11], \
+	          [11, 13, 9, 14]]
+	for i in range(4):
+		col_collector = []
+		for j in range(4):
+			row_collector = BitVector.BitVector(intVal=0, size=8)
+			for k in range(4):
+				after_mult = gf_mult(state_array[i][k], matrix[j][k])
+				row_collector = Xor(after_mult, row_collector)
+			col_collector.append(row_collector)
+		new_sa.append(col_collector)
+	return new_sa	
 
 def encrypt(hex_key, hex_plaintext):
 	''' perform AES encryption using 128-bit hex_key on 128-bit plaintext 
-hex_plaintext, where both key and plaintext values are expressed
-in hexadecimal string notation. '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
-pass
+	hex_plaintext, where both key and plaintext values are expressed
+	in hexadecimal string notation. '''
+	# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
+	NIST_test_key = hex_key
+	NIST_test_plaintext = hex_plaintext
+	NIST_test_plaintext_BV = key_bv(NIST_test_plaintext)
+	key_schedule = init_key_schedule(key_bv(NIST_test_key))
+	state_array = init_state_array(NIST_test_plaintext_BV)
+	state_array = add_round_key(state_array, key_schedule[0:4])
+	round_time = 10
+	sa = state_array
+	for i in range(round_time):
+		sa = sub_bytes(sa)
+		sa = shift_rows(sa)
+		if (i != round_time-1):
+			sa = mix_columns(sa)
+		sa = add_round_key(sa, key_schedule[(4+i*4):(8+i*4)])
+	return sa
+    ############## end Play with it for one round #######################        
 
 def decrypt(hex_key, hex_ciphertext):
 	''' perform AES decryption using 128-bit hex_key on 128-bit ciphertext
