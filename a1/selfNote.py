@@ -134,5 +134,5 @@ if __name__ == "__main__":
     #print result
     
     ################################################################
-    result = state_str(encrypt(NIST_test_key, NIST_test_plaintext))
+    result = state_str(decrypt(NIST_test_key, '3925841d02dc09fbdc118597196a0b32'))
     print result
