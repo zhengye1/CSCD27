@@ -272,17 +272,18 @@ def inv_shift_rows(sa):
 
 def Xor(bv1, bv2):
 	'''does bv1 xor bv2. bv has to be 8-bits BitVectors'''
-	temp = []
-	new_temp = BitVector.BitVector(size=0)
-	for i in range(0, 8):
-		if (bv1[i] != bv2[i]):
-			temp.append(BitVector.BitVector(intVal=1, size = 1))
-		else:
-			temp.append(BitVector.BitVector(intVal=0, size = 1))
-	for i in range(0, 8):
-		new_temp += temp[i] 
+	#temp = []
+	#new_temp = BitVector.BitVector(size=0)
+	#for i in range(0, 8):
+	#	if (bv1[i] != bv2[i]):
+	#		temp.append(BitVector.BitVector(intVal=1, size = 1))
+	#	else:
+	#		temp.append(BitVector.BitVector(intVal=0, size = 1))
+	#for i in range(0, 8):
+	#	new_temp += temp[i] 
         
-	return new_temp
+	#return new_temp
+	return bv1^bv2
 
 
 def gf_mult(bv, factor):
@@ -384,7 +385,33 @@ def encrypt(hex_key, hex_plaintext):
 
 def decrypt(hex_key, hex_ciphertext):
 	''' perform AES decryption using 128-bit hex_key on 128-bit ciphertext
-hex_ciphertext, where both key and ciphertext values are expressed
-in hexadecimal string notation. '''
-# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
-pass
+	hex_ciphertext, where both key and ciphertext values are expressed
+	in hexadecimal string notation. '''
+	# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
+	round_time = 10
+	NIST_test_key = hex_key
+	NIST_test_plaintext = hex_ciphertext
+	NIST_test_plaintext_BV = key_bv(NIST_test_plaintext)
+	key_schedule = init_key_schedule(key_bv(NIST_test_key))
+	key_len = len(key_schedule)
+	state_array = init_state_array(NIST_test_plaintext_BV)
+	state_array = add_round_key(state_array, key_schedule[(key_len-4):])
+	print state_str(state_array) == 'e9317db5cb322c723d2e895faf090794'
+	sa = state_array
+	for i in range(round_time):
+		print key_len-4*i
+		#print len(key_schedule)
+		sa = add_round_key(sa, key_schedule[(key_len-4*i-4):(key_len-4*i)])
+		print state_str(sa)
+		if (i != 0):
+			sa = inv_mix_columns(sa)
+		print state_str(sa)
+		sa = inv_shift_rows(sa)
+		print state_str(sa)
+		sa = inv_sub_bytes(sa)
+		print state_str(sa)
+		print "################################################"
+		
+		
+		
+	return sa

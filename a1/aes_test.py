@@ -158,3 +158,13 @@ def test_inv_mix_columns_2():
 	result = state_str(inv_mix_columns(sa))
 	assert result == "be3bd4fed4e1f2c80a642cc0da83864d", \
 	       "inv_mix_columns 2 error"
+	       
+def test_encrypt():
+	result = state_str(encrypt(NIST_test_key, NIST_test_plaintext))
+	assert result == "3925841d02dc09fbdc118597196a0b32", \
+	"encrypt() does not do as the animation does"
+	
+def test_encrypt_2():
+	result = state_str(encrypt(NIST_test_key, NIST_test_plaintext))
+	assert result == "3925841d02dc09fbdc118597196a0b32", \
+	"encrypt() test 2 error"
