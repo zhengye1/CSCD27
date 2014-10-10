@@ -168,3 +168,21 @@ def test_encrypt_2():
 	result = state_str(encrypt(NIST_test_key, NIST_test_plaintext))
 	assert result == "3925841d02dc09fbdc118597196a0b32", \
 	"encrypt() test 2 error"
+	
+def test_decrypt_1():
+	result = state_str(decrypt(NIST_test_key, "3925841d02dc09fbdc118597196a0b32"))
+	assert result == NIST_test_plaintext, \
+	"decrypt() does not do as the animation does"
+	
+test_str1 = '00512fd1b1c889ff54766dcdfa1b99ea'
+test_str2 = '473794ed40d4e4a5a3703aa64c9f42bc'
+test_key = "be3bd4fed4e1f2c80a642cc0da83864d"
+def test_overall_1():
+	assert state_str(decrypt(test_key, \
+	state_str(encrypt(test_key, test_str1)))) == test_str1, \
+	"Overall test 1 fail"
+	
+def test_overall_2():
+	assert state_str(decrypt(test_key, \
+	state_str(encrypt(test_key, test_str2)))) == test_str2, \
+	"Overall test 2 fail"

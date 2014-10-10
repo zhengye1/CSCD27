@@ -395,23 +395,28 @@ def decrypt(hex_key, hex_ciphertext):
 	key_schedule = init_key_schedule(key_bv(NIST_test_key))
 	key_len = len(key_schedule)
 	state_array = init_state_array(NIST_test_plaintext_BV)
-	state_array = add_round_key(state_array, key_schedule[(key_len-4):])
-	print state_str(state_array) == 'e9317db5cb322c723d2e895faf090794'
-	sa = state_array
-	for i in range(round_time):
-		print key_len-4*i
-		#print len(key_schedule)
-		sa = add_round_key(sa, key_schedule[(key_len-4*i-4):(key_len-4*i)])
+	
+	print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+	sa = add_round_key(state_array, key_schedule[(key_len-4):])
+	print state_str(sa)
+	sa = inv_shift_rows(sa)
+	print state_str(sa)
+	sa = inv_sub_bytes(sa)
+	print state_str(sa)
+	
+	print "################################################"
+	for i in range(round_time-1):
+		sa = add_round_key(sa, key_schedule[(key_len-4*i-8):(key_len-4*i-4)])
 		print state_str(sa)
-		if (i != 0):
-			sa = inv_mix_columns(sa)
+		sa = inv_mix_columns(sa)
 		print state_str(sa)
 		sa = inv_shift_rows(sa)
 		print state_str(sa)
 		sa = inv_sub_bytes(sa)
-		print state_str(sa)
+		print state_str(sa)		
 		print "################################################"
-		
-		
+	sa = add_round_key(sa, key_schedule[0:4])
+	print state_str(sa)
+	
 		
 	return sa
