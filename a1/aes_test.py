@@ -35,40 +35,148 @@ state_array = init_state_array(NIST_test_plaintext_BV)
 # perform initial add_round_key step before entering "round" process
 state_array = add_round_key(state_array, key_schedule[0:4])
 
-
+######################################################################
+#Test Cases for init_key Schedule
 def test_key_schedule():
 	for r in range(11):
 		result = state_str(key_schedule[r * 4:r * 4 +4]) 
 		assert result == round_key_array[r], \
 			"Key Schedule is wrong, result = " + result + " and round " + str(r)
 
+# Key #2
+key2 = '6920e299a5202a6d656e636869746f2a'
+
+## Perform key schedule
+key_schedule2 = init_key_schedule(key_bv(key2))
+
+round_key_array2 = []
+round_key_array2.append(key2)
+round_key_array2.append('fa8807605fa82d0d3ac64e6553b2214f')
+round_key_array2.append('cf75838d90ddae80aa1be0e5f9a9c1aa')
+round_key_array2.append('180d2f1488d0819422cb6171db62a0db')
+round_key_array2.append('baed96ad323d173910f67648cb94d693')
+round_key_array2.append('881b4ab2ba265d8baad02bc36144fd50')
+round_key_array2.append('b34f195d096944d6a3b96f15c2fd9245')
+round_key_array2.append('a7007778ae6933ae0dd05cbbcf2dcefe')
+round_key_array2.append('ff8bccf251e2ff5c5c32a3e7931f6d19')
+round_key_array2.append('24b7182e7555e77229674495ba78298c')
+round_key_array2.append('ae127cdadb479ba8f220df3d4858f6b1')
+
+def test_key_schedule2():
+	for r in range(11):
+		result = state_str(key_schedule2[r * 4:r * 4 +4]) 
+		assert result == round_key_array2[r], \
+			"Key Schedule is wrong, result = " + result + " and round " + str(r)
+
+#Key 3"
+key3 = 'ffffffffffffffffffffffffffffffff'
+
+# Perform key schedule
+key_schedule3 = init_key_schedule(key_bv(key3))
+round_key_array3 = []
+round_key_array3.append('ffffffffffffffffffffffffffffffff')
+round_key_array3.append('e8e9e9e917161616e8e9e9e917161616')
+round_key_array3.append('adaeae19bab8b80f525151e6454747f0')
+round_key_array3.append('090e2277b3b69a78e1e7cb9ea4a08c6e')
+round_key_array3.append('e16abd3e52dc2746b33becd8179b60b6')
+round_key_array3.append('e5baf3ceb766d488045d385013c658e6')
+round_key_array3.append('71d07db3c6b6a93bc2eb916bd12dc98d')
+round_key_array3.append('e90d208d2fbb89b6ed5018dd3c7dd150')
+round_key_array3.append('96337366b988fad054d8e20d68a5335d')
+round_key_array3.append('8bf03f233278c5f366a027fe0e0514a3')
+round_key_array3.append('d60a3588e472f07b82d2d7858cd7c326')
+
+def test_key_schedule3():
+	for r in range(11):
+		result = state_str(key_schedule3[r * 4:r * 4 +4]) 
+		assert result == round_key_array3[r], \
+			"Key Schedule is wrong, result = " + result + " and round " + str(r)
+#################################################################################
+
+##########################################################################
+# Test cases for input_round_1					
 def test_input_round_1():
 	assert state_str(state_array) == NIST_input_round_1,\
       "test first-round input value based on output of initial add-round-key"
+############################################################################
 
-
+############################################################################
+# Test cases for sbox lookup
+# State array is the round 1 input
 def test_sbox_lookup():
 	result = bv_hex_str(sbox_lookup(state_array[0][0])) 
 	assert result == 'd4', \
 	"function return " + result
+	
+def test_sbox_lookup2():
+	result = bv_hex_str(sbox_lookup(key_bv('cf')))
+	assert result == '8a', \
+	"function return " + result
+	
+def test_sbox_lookup3():
+	result = bv_hex_str(sbox_lookup(key_bv('09'))) 
+	assert result == '01', \
+	"function return " + result	
 
+##########################################################################
+# Test cases for inv sbox lookup, state array is round 1 input
 def test_inv_sbox_lookup():
 	result = bv_hex_str(inv_sbox_lookup(sbox_lookup(state_array[0][0])))
 	assert result == '19', \
 	"function return " + result
 
+def test_inv_sbox_lookup2():
+	result = bv_hex_str(inv_sbox_lookup(key_bv('8a')))
+	assert result == 'cf', \
+	"function return " + result
+	
+def test_inv_sbox_lookup3():
+	result = bv_hex_str(inv_sbox_lookup(key_bv('01')))
+	assert result == '09', \
+	"function return " + result
+########################################################################
+# Test cases for sub_bytes, state array is round 1 input
 # Perform sub bytes
 sub_bytes_array = sub_bytes(state_array)
 def test_sub_bytes():
 	assert(state_str(sub_bytes_array)) == 'd42711aee0bf98f1b8b45de51e415230',\
-	"sub_bytes return " + result
+	"sub_bytes return " + state_str(sub_bytes_array)
 
+# new state array for test_sub_bytes2 
+state_array2_text = 'a49c7ff2689f352b6b5bea43026a5049'
+state_array2 = init_state_array(key_bv(state_array2_text))
+sub_bytes_array2 =  sub_bytes(state_array2)
+def test_sub_bytes2():
+	assert(state_str(sub_bytes_array2)) == '49ded28945db96f17f39871a7702533b',\
+	"sub_bytes return " + state_str(sub_bytes_array2)
+	
+# new state array for test_sub_bytes3
+state_array3_text = 'aa8f5f0361dde3ef82d24ad26832469a'
+state_array3 = init_state_array(key_bv(state_array3_text))
+sub_bytes_array3 =  sub_bytes(state_array3)
+def test_sub_bytes3():
+	assert(state_str(sub_bytes_array3)) == 'ac73cf7befc111df13b5d6b545235ab8',\
+	"sub_bytes return " + state_str(sub_bytes_array3)
+######################################################################
 
+######################################################################
+#Test cases for inv_sub_bytes	
 def test_inv_sub_bytes():
 	result = inv_sub_bytes(sub_bytes_array)
 	assert state_str(result) == NIST_input_round_1, \
 	"inv_sub_bytes wrong"
 
+def test_inv_sub_bytes2():
+	result = inv_sub_bytes(sub_bytes_array2)
+	assert state_str(result) == state_array2_text, \
+	"inv_sub_bytes_wrong"
+	
+def test_inv_sub_bytes3():
+	result = inv_sub_bytes(sub_bytes_array3)
+	assert state_str(result) == state_array3_text, \
+	"inv_sub_bytes_wrong"
+
+######################################################################
 # Used for test shift bytes	
 row = []
 for i in range(1, 4):
@@ -97,6 +205,8 @@ def test_shift_rows():
 	assert state_str(shift_row_array) == 'd4bf5d30e0b452aeb84111f11e2798e5',\
 	"shift rows return " + shift_row_array
 
+def test_shift_rows_2():
+	assert 
 def test_inv_shift_rows():
 	result = inv_shift_rows(shift_row_array)
 	assert state_str(result) == state_str(sub_bytes_array), \

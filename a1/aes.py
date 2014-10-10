@@ -4,6 +4,10 @@
 Sources Used: BitVector documentation, NIST AES-spec appendix for tests
 '''
 
+'''
+Vincent Zheng(998478829, mathlab id:zhengye1) is doing package 1 and package 2
+Pan Xu(998448201, mathlab id:xupan1) is doing package 3 and package 4
+'''
 import sys
 import BitVector
 import binascii
@@ -139,17 +143,23 @@ def init_key_schedule(key_bv):
 	'''key_bv is the 128-bit input key value represented as a BitVector; return
 key_schedule as an array of (4*(1+#rounds)) 32-bit BitVector words '''
 # ADD YOUR CODE HERE - SEE LEC SLIDES 44-47 
+	# First round using init_state_array to create a 4 x 4 array
 	round_key = init_state_array(key_bv)
+	
+	# Begin to expand
 	for i in range(4, 4 * ( 1 + rounds)):
 		col = []
 		if (i % 4 == 0):
+			# Create a temporay array to perform rot words, sub sbox,
+			# and xor the rcon
+			
 			# rot words
-			temp = []
+			temp = [] 
 			temp = copy.deepcopy(round_key[i - 1][1:])
 			temp.append(round_key[i - 1][0])
 			# sub sbox			
 			temp = sub_key_bytes(temp)
-			# xor
+			# xor rcon
 			rcon_bv = BitVector.BitVector(intVal=rcon[i/4], \
 			                                     size = 8)
 			temp[0] = (round_key[i - 4][0].__xor__(temp[0]))\
@@ -157,7 +167,9 @@ key_schedule as an array of (4*(1+#rounds)) 32-bit BitVector words '''
 			temp[1] = round_key[i - 4][1].__xor__(temp[1])
 			temp[2] = round_key[i - 4][2].__xor__(temp[2])
 			temp[3] = round_key[i - 4][3].__xor__(temp[3])			
-			# make a copy of new one, and assert to new key array
+			
+			# since col is the array, it need to copy the whole content
+			# of what temp have.
 			col = copy.deepcopy(temp)
 		else:
 			for j in range(4):
@@ -203,9 +215,7 @@ def sub_bytes(sa):
 returning new state array. '''
 	output = []
 	for i in range(4):
-		col = []
-		for j in range(4):
-			col.append(sbox_lookup(sa[i][j]))
+		col = sub_key_bytes(sa[i])
 		output.append(col)
 	return output
 
@@ -271,21 +281,6 @@ def inv_shift_rows(sa):
 		output[3][byte] = row[24:32]
 	return output
 
-
-def Xor(bv1, bv2):
-	'''does bv1 xor bv2. bv has to be 8-bits BitVectors'''
-	temp = []
-	new_temp = BitVector.BitVector(size=0)
-	for i in range(0, 8):
-		if (bv1[i] != bv2[i]):
-			temp.append(BitVector.BitVector(intVal=1, size = 1))
-		else:
-			temp.append(BitVector.BitVector(intVal=0, size = 1))
-	for i in range(0, 8):
-		new_temp += temp[i] 
-        
-	return new_temp
-
 def gf_mult(bv, factor):
 	''' Used by mix_columns and inv_mix_columns to perform multiplication in
 	GF(2^8).  param bv is an 8-bit BitVector, param factor is an integer.
@@ -296,7 +291,7 @@ def gf_mult(bv, factor):
 		#bv = bv + BitVector.BitVector(intVal=0, size=1) #left shift
 		if (bv[0] == 1):
 			bv = ls_bv[1:] + BitVector.BitVector(intVal=0, size=1)
-			bv = Xor(bv,BitVector.BitVector(intVal=27, size=8))
+			bv = bv.__xor__(BitVector.BitVector(intVal=27, size=8))
 		else:
 			bv = bv[1:]   
 			bv = bv + BitVector.BitVector(intVal=0, size=1)
@@ -314,7 +309,7 @@ def gf_mult(bv, factor):
 		temp.append(bv)
 	final = BitVector.BitVector(intVal=0, size=8)
 	for i in range(len(temp)):
-		final = Xor(final, temp[i]) 
+		final = final.__xor__(temp[i]) 
 	return final	
 		
 
@@ -334,7 +329,7 @@ def mix_columns(sa):
 			row_collector = BitVector.BitVector(intVal=0, size=8)
 			for k in range(4):
 				after_mult = gf_mult(state_array[i][k], matrix[j][k])
-				row_collector = Xor(after_mult, row_collector)
+				row_collector = after_mult.__xor__(row_collector)
 			col_collector.append(row_collector)
 		new_sa.append(col_collector)
 	return new_sa	
@@ -356,7 +351,7 @@ def inv_mix_columns(sa):
 			row_collector = BitVector.BitVector(intVal=0, size=8)
 			for k in range(4):
 				after_mult = gf_mult(state_array[i][k], matrix[j][k])
-				row_collector = Xor(after_mult, row_collector)
+				row_collector = after_mult.__xor__(row_collector)
 			col_collector.append(row_collector)
 		new_sa.append(col_collector)
 	return new_sa	
@@ -372,9 +367,8 @@ def encrypt(hex_key, hex_plaintext):
 	key_schedule = init_key_schedule(key_bv(NIST_test_key))
 	state_array = init_state_array(NIST_test_plaintext_BV)
 	state_array = add_round_key(state_array, key_schedule[0:4])
-	round_time = 10
 	sa = state_array
-	for i in range(round_time):
+	for i in range(rounds):
 		sa = sub_bytes(sa)
 		sa = shift_rows(sa)
 		if (i != round_time-1):
