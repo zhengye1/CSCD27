@@ -222,12 +222,19 @@ def test_shift_rows_3():
 def test_inv_shift_rows():
 	result = inv_shift_rows(shift_row_array)
 	assert state_str(result) == state_str(sub_bytes_array), \
-	"inv shift row wrong"
+	"inv shift return " + state_str(result)
 
 def test_inv_shift_rows_2():
-	pass
+	result = inv_shift_rows(shift_row_array2)
+	assert state_str(result) == state_str(sub_bytes_array2), \
+	"inv shift return " + state_str(result)
+	
 def test_inv_shift_rows_3():
-	pass
+	result = inv_shift_rows(shift_row_array3)
+	assert state_str(result) == state_str(sub_bytes_array3), \
+	"inv shift return " + state_str(result)
+######################################################################
+	
 def test_sub_key_bytes():
 	key_word = key_schedule[3]
 	temp = []
@@ -238,7 +245,19 @@ def test_sub_key_bytes():
 	result = bv_hex_str(result[0]) + bv_hex_str(result[1]) + \
 	        bv_hex_str(result[2]) + bv_hex_str(result[3])
 	assert result == '8a84eb01', \
-	       "sub key butes return " + result
+	       "sub key bytes return " + result
+
+def test_sub_key_bytes2():
+	keyword = [key_bv('6c'), key_bv('76'), key_bv('05'), key_bv('2a')]
+	result2 = sub_key_bytes(keyword)
+	assert key_str(result2) == "50386be5",\
+		"sub key bytes return " + key_str(result2)
+		
+def test_sub_key_bytes3():
+	keyword = [key_bv('59'), key_bv('f6'), key_bv('7f'), key_bv('73')]
+	result2 = sub_key_bytes(keyword)
+	assert key_str(result2) == "cb42d28f",\
+		"sub key bytes return " + key_str(result2)
 
 def test_gf_mult():
 	test_bv = 191 #hex as "bf"
