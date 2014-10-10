@@ -225,20 +225,13 @@ returning new state array. '''
 def shift_bytes_left(bv, num):
 	''' Return the value of BitVector bv after rotating it to the left
 by num bytes'''
-<<<<<<< HEAD:a1/aes.py
-# ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
-	number_of_bit = num * 8
-	bv_copy = copy.deepcopy(bv)
-	bv_copy.__lshift__(number_of_bit)
-	return bv_copy
-=======
+
 # ADD YOUR CODE HERE - SEE LEC SLIDES 30-32   
 	number_of_bit = num * 8
 	bv_copy = copy.deepcopy(bv)
 	bv_copy.__lshift__(number_of_bit)
 	return bv_copy
 
->>>>>>> developer:a1/aes.py
 
 def shift_bytes_right(bv, num):
 	''' Return the value of BitVector bv after rotating it to the right
@@ -277,8 +270,7 @@ def inv_shift_rows(sa):
 		output[2][byte] = row[16:24]
 		output[3][byte] = row[24:32]
 	return output
-<<<<<<< HEAD:a1/aes.py
-=======
+
 
 def Xor(bv1, bv2):
 	'''does bv1 xor bv2. bv has to be 8-bits BitVectors'''
@@ -293,8 +285,6 @@ def Xor(bv1, bv2):
 		new_temp += temp[i] 
         
 	return new_temp
-
->>>>>>> developer:a1/aes.py
 
 def gf_mult(bv, factor):
 	''' Used by mix_columns and inv_mix_columns to perform multiplication in
