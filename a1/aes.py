@@ -4,6 +4,11 @@
 Sources Used: BitVector documentation, NIST AES-spec appendix for tests
 '''
 
+'''
+Vincent Zheng(998478829, mathlab id:zhengye1) is doing package 1 and package 2
+Pan Xu(998448201, mathlab id:xupan1) is doing package 3 and package 4
+'''
+
 import sys
 import BitVector
 import binascii
