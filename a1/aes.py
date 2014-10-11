@@ -275,6 +275,12 @@ def inv_shift_rows(sa):
 		output[3][byte] = row[24:32]
 	return output
 
+########################### /\ Vincent /\ ###############################
+###########################//\\#######//\\###############################
+######################### Work division Line ############################
+#############################\\//###\\//#################################
+############################# \/ Pan \/ #################################
+
 def Xor(bv1, bv2):
 	'''does bv1 xor bv2. bv has to be 8-bits BitVectors'''
 	#temp = []
@@ -285,9 +291,10 @@ def Xor(bv1, bv2):
 	#	else:
 	#		temp.append(BitVector.BitVector(intVal=0, size = 1))
 	#for i in range(0, 8):
-	#	new_temp += temp[i] 
-        
+	#	new_temp += temp[i]         
 	#return new_temp
+
+	# Now there is a new way:
 	return bv1^bv2
 
 
@@ -328,7 +335,7 @@ def gf_mult(bv, factor):
 
 def mix_columns(sa):
 	''' Mix columns on state array sa to return new state array '''
-	# ADD YOUR CODE HERE - SEE LEC SLIDES 33-35   
+	# SEE LEC SLIDES 33-35   
 	state_array=copy.deepcopy(sa)
 	new_sa = []
 	matrix = [[2, 3, 1, 1], [1, 2, 3, 1], \
@@ -348,13 +355,16 @@ def mix_columns(sa):
 
 def inv_mix_columns(sa):
 	''' Inverse mix columns on state array sa to return new state array '''
-	# ADD YOUR CODE HERE - SEE LEC SLIDE 36  
+	# Same as mix_columns(), but with a inversed matrix
 	state_array=copy.deepcopy(sa)
 	new_sa = []
+
+	# The inverse matrix
 	matrix = [[14, 11, 13, 9], \
 	          [9, 14, 11, 13], \
                   [13, 9, 14, 11], \
 	          [11, 13, 9, 14]]
+	
 	for i in range(4):
 		col_collector = []
 		for j in range(4):
@@ -370,58 +380,55 @@ def encrypt(hex_key, hex_plaintext):
 	''' perform AES encryption using 128-bit hex_key on 128-bit plaintext 
 	hex_plaintext, where both key and plaintext values are expressed
 	in hexadecimal string notation. '''
-	# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
+	# Setups
+	round_time = 10
 	NIST_test_key = hex_key
 	NIST_test_plaintext = hex_plaintext
 	NIST_test_plaintext_BV = key_bv(NIST_test_plaintext)
-	key_schedule = init_key_schedule(key_bv(NIST_test_key))
 	state_array = init_state_array(NIST_test_plaintext_BV)
+	# key schedule
+	key_schedule = init_key_schedule(key_bv(NIST_test_key))
+	# First iteration
 	state_array = add_round_key(state_array, key_schedule[0:4])
-	round_time = 10
+	
 	sa = state_array
+	# The rest of iterations
 	for i in range(round_time):
 		sa = sub_bytes(sa)
 		sa = shift_rows(sa)
-		if (i != round_time-1):
+		if (i != round_time-1): # Skip the mix column step in last iteration
 			sa = mix_columns(sa)
 		sa = add_round_key(sa, key_schedule[(4+i*4):(8+i*4)])
-	return sa
-    ############## end Play with it for one round #######################        
+	return sa      
 
 def decrypt(hex_key, hex_ciphertext):
 	''' perform AES decryption using 128-bit hex_key on 128-bit ciphertext
 	hex_ciphertext, where both key and ciphertext values are expressed
 	in hexadecimal string notation. '''
-	# ADD YOUR CODE HERE - SEE LEC SLIDES 14-15
+	# Setups
 	round_time = 10
 	NIST_test_key = hex_key
 	NIST_test_plaintext = hex_ciphertext
 	NIST_test_plaintext_BV = key_bv(NIST_test_plaintext)
+
+	# Generate key schedule
 	key_schedule = init_key_schedule(key_bv(NIST_test_key))
 	key_len = len(key_schedule)
+	
+	#First iteration
 	state_array = init_state_array(NIST_test_plaintext_BV)
-	
-	print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 	sa = add_round_key(state_array, key_schedule[(key_len-4):])
-	print state_str(sa)
 	sa = inv_shift_rows(sa)
-	print state_str(sa)
 	sa = inv_sub_bytes(sa)
-	print state_str(sa)
 	
-	print "################################################"
+	# The rest of the iterations
 	for i in range(round_time-1):
 		sa = add_round_key(sa, key_schedule[(key_len-4*i-8):(key_len-4*i-4)])
-		print state_str(sa)
 		sa = inv_mix_columns(sa)
-		print state_str(sa)
 		sa = inv_shift_rows(sa)
-		print state_str(sa)
-		sa = inv_sub_bytes(sa)
-		print state_str(sa)		
-		print "################################################"
+		sa = inv_sub_bytes(sa)	
+	# final step
 	sa = add_round_key(sa, key_schedule[0:4])
-	print state_str(sa)
 	
 		
 	return sa

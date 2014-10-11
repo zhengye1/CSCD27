@@ -259,6 +259,17 @@ def test_sub_key_bytes3():
 	assert key_str(result2) == "cb42d28f",\
 		"sub key bytes return " + key_str(result2)
 
+
+############ Starting from this and below are the work of Pan Xu #################
+
+# Tests for Xor() ####################################################
+all_zero = BitVector.BitVector(intVal=0, size=8)
+all_one = BitVector.BitVector(intVal=1, size=8)
+def test_Xor_1():
+	assert Xor(all_zero, all_one) == all_one, \
+		"Xor test 4 error"
+
+# Tests for gf_mult() ################################################
 def test_gf_mult():
 	test_bv = 191 #hex as "bf"
 	factor = 2
@@ -279,7 +290,9 @@ def test_gf_mult_3():
 	bv=BitVector.BitVector(intVal=test_bv, size=8)
 	assert str(gf_mult(bv, factor)) == "00110000", \
 	       "gf_mult test 3 error"
-	
+
+
+# tests	for mix_columes() and invv_mix_columns()#####################
 def test_mix_columns():
 	sa = init_state_array(key_bv('876e46a6f24ce78c4d904ad897ecc395'))
 	result = state_str(mix_columns(sa))
@@ -303,3 +316,36 @@ def test_inv_mix_columns_2():
 	result = state_str(inv_mix_columns(sa))
 	assert result == "be3bd4fed4e1f2c80a642cc0da83864d", \
 	       "inv_mix_columns 2 error"
+
+# Tests for encrypt() and decrypt() #################################
+def test_encrypt():
+	result = state_str(encrypt(NIST_test_key, NIST_test_plaintext))
+	assert result == "3925841d02dc09fbdc118597196a0b32", \
+	"encrypt() does not do as the animation does"
+	
+def test_encrypt_2():
+	result = state_str(encrypt(NIST_test_key, NIST_test_plaintext))
+	assert result == "3925841d02dc09fbdc118597196a0b32", \
+	"encrypt() test 2 error"
+	
+def test_decrypt_1():
+	result = state_str(decrypt(NIST_test_key, "3925841d02dc09fbdc118597196a0b32"))
+	assert result == NIST_test_plaintext, \
+	"decrypt() does not do as the animation does"
+
+# Overall tests #######################################################
+	
+test_str1 = '00512fd1b1c889ff54766dcdfa1b99ea'
+test_str2 = '473794ed40d4e4a5a3703aa64c9f42bc'
+test_key = "be3bd4fed4e1f2c80a642cc0da83864d"
+
+def test_overall_1():
+	assert state_str(decrypt(test_key, \
+	state_str(encrypt(test_key, test_str1)))) == test_str1, \
+	"Overall test 1 fail"
+	
+def test_overall_2():
+	assert state_str(decrypt(test_key, \
+	state_str(encrypt(test_key, test_str2)))) == test_str2, \
+	"Overall test 2 fail"
+
